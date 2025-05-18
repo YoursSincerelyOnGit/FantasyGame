@@ -567,6 +567,7 @@ class Program
                     if (enemy.Health <= 0)
                     {
                         Console.WriteLine($"You defeated the {enemy.Name}! Well done.");
+                        DropRandomPotion(player); // Add potion drop
                         break;
                     }
 
@@ -640,6 +641,21 @@ class Program
         }
 
         EncounterCombat.CurrentEnemy = null;
+    }
+
+    static void DropRandomPotion(Player player)
+    {
+        if (Program.random.Next(100) < 50) // 50% chance
+        {
+            string[] potions = new string[] { /* ... */ };
+            string selectedPotion = potions[Program.random.Next(potions.Length)];
+            Item potionItem = new Item { Name = selectedPotion, Type = ItemType.Consumable };
+            player.PickUp(potionItem);
+        }
+        else
+        {
+            Console.WriteLine("The enemy dropped nothing of value.");
+        }
     }
 
     static void ShowProgress(Player player)

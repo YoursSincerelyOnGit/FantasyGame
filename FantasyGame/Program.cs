@@ -379,22 +379,61 @@ class Program
 
             if (actionCode == "move();" || actionCode == "move()")
             {
-                // Movement challenge
-                Console.WriteLine("\n=== PROGRAMMING CHALLENGE: MOVE EAST TOWARD DURBAN ===");
-                Console.WriteLine("To move 100 km east toward Durban, write the code to move:");
-                Console.WriteLine("Format: if (direction == \"east\")");
+                // Movement challenge with Walk/Run variations
+                Console.WriteLine("\n=== PROGRAMMING CHALLENGE: CHOOSE MOVEMENT TYPE ===");
+                Console.WriteLine("You can move east toward Durban in two ways:");
+                Console.WriteLine("- Walk: Costs 10 energy, progresses 100 km (~6%)");
+                Console.WriteLine("- Run: Costs 25 energy, progresses 150 km (~9%)");
+                Console.WriteLine("Write an if statement to specify your movement type:");
+                Console.WriteLine("Format: if (moveType == \"walk\") or if (moveType == \"run\")");
+                Console.WriteLine("First, how do you want to move? (walk/run):");
+                string moveType = Console.ReadLine().ToLower();
 
+                Console.WriteLine($"Now write the if statement for moveType \"{moveType}\":");
                 Console.Write("Your code: ");
                 string moveCode = Console.ReadLine().Trim();
 
                 if (moveCode.ToLower().Contains("if") &&
-                    moveCode.ToLower().Contains("direction == \"east\""))
+                    moveCode.ToLower().Contains($"moveType == \"{moveType}\""))
                 {
                     Console.WriteLine("✓ Correct conditional statement!");
-                    player.Distance += 100;
-                    player.CurrentLocation = "En route to Durban";
-                    Console.WriteLine("You travel east toward Durban...");
-                    RandomEvent(player);
+
+                    if (moveType == "walk")
+                    {
+                        if (player.Energy >= 10)
+                        {
+                            player.Energy -= 10;
+                            player.Distance += 100;
+                            player.CurrentLocation = "En route to Durban";
+                            Console.WriteLine("You walk east toward Durban, covering 100 km.");
+                            Console.WriteLine("Energy cost: -10. Current energy: " + player.Energy);
+                            RandomEvent(player);
+                        }
+                        else
+                        {
+                            Console.WriteLine("You don't have enough energy to walk! Need at least 10 energy.");
+                        }
+                    }
+                    else if (moveType == "run")
+                    {
+                        if (player.Energy >= 25)
+                        {
+                            player.Energy -= 25;
+                            player.Distance += 150;
+                            player.CurrentLocation = "En route to Durban";
+                            Console.WriteLine("You run east toward Durban, covering 150 km.");
+                            Console.WriteLine("Energy cost: -25. Current energy: " + player.Energy);
+                            RandomEvent(player);
+                        }
+                        else
+                        {
+                            Console.WriteLine("You don't have enough energy to run! Need at least 25 energy.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid movement type! Use 'walk' or 'run'.");
+                    }
 
                     if (player.Distance >= 1600)
                     {
@@ -406,7 +445,7 @@ class Program
                 {
                     player.Health = Math.Max(0, player.Health - 10);
                     Console.WriteLine("✗ Incorrect move statement. Try again next time!");
-                    Console.WriteLine("Format: if (direction == \"east\")");
+                    Console.WriteLine($"Format: if (moveType == \"{moveType}\")");
                     Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
                     if (player.Health <= 0)
                     {

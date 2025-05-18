@@ -20,256 +20,300 @@ class Program
     {
         Console.WriteLine("Welcome to the Traveler's Journey - Programming Edition!");
         Console.WriteLine("Embark on an epic quest from Cape Town to Durban, mastering the art of coding!");
-        Console.WriteLine("Before we begin, please enter your character's name:");
-        string playerName = Console.ReadLine();
 
-        Player player = new Player(playerName);
-
-        Console.WriteLine($"\nGreetings, {player.Name}! You are a brave traveler on a quest from Cape Town to Durban (1600 km).");
-        Console.WriteLine("Your journey will test your coding skills as you face challenges and foes.");
-        Console.WriteLine("Your inventory contains a bed, a sword, some meat, and new potions. More treasures await!");
-        Console.WriteLine("The sun rises as you begin your journey. Be mindful of day and night!");
-        Console.WriteLine("Daytime lasts for 3 actions, and night lasts for 3 actions.");
-        Console.WriteLine("Traveling at night doubles your distance but increases danger.");
-        Console.WriteLine("Resting at night will advance time to morning, adding remaining night turns to your day!");
-        Console.WriteLine("First, let's prepare you with a tutorial.");
-
-        Console.WriteLine("\n=== TUTORIAL: CREATE YOUR HEALTH VARIABLE ===");
-        Console.WriteLine("To start your journey, you need to declare your health variable!");
-        Console.WriteLine("Write the code to declare an integer variable called 'health' with value 100:");
-        Console.WriteLine("Example format: int variableName = value;");
-
-        bool healthCreated = false;
-        while (!healthCreated)
-        {
-            Console.Write("Your code: ");
-            string healthCode = Console.ReadLine().Trim();
-
-            if (healthCode.ToLower() == "int health = 100;" || healthCode.ToLower() == "int health=100;")
-            {
-                Console.WriteLine("✓ Correct! Your health is now set to 100!");
-                healthCreated = true;
-            }
-            else
-            {
-                player.Health = Math.Max(0, player.Health - 10);
-                Console.WriteLine("✗ Incorrect. Try again! Format: int health = 100;");
-                Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
-                if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
-            }
-        }
-
-        Console.WriteLine("\n=== TUTORIAL: WEAPON CRAFTING - IF STATEMENT CHALLENGE ===");
-        Console.WriteLine("In this tutorial, you'll craft a weapon for your journey.");
-        Console.WriteLine("Choose your weapon type by writing an if statement:");
-        Console.WriteLine("Available weapons:");
-        Console.WriteLine("1. Sword (requires Oak Wood)");
-        Console.WriteLine("2. Bow (requires Pine Wood)");
-        Console.WriteLine("3. Spear (requires Birch Wood)");
-        Console.WriteLine("4. Axe (requires Maple Wood)");
-
-        string weaponChoice = "";
-        string requiredWood = "";
+        // Main Menu
+        Player player = null;
         bool validChoice = false;
-
-        Console.WriteLine("\nWrite an if statement to check weapon choice:");
-        Console.WriteLine("Example: if (choice == \"1\") { weapon = \"Sword\"; }");
-        Console.WriteLine("First, what's your choice number (1-4)?");
-        string choiceNumber = Console.ReadLine();
-
         while (!validChoice)
         {
-            Console.WriteLine($"Now write the if statement for choice {choiceNumber}:");
-            Console.Write("Your code: ");
-            string ifStatement = Console.ReadLine().Trim();
+            Console.WriteLine("\n=== MAIN MENU ===");
+            Console.WriteLine("1. New Game");
+            Console.WriteLine("2. Load Game");
+            Console.Write("Enter your choice (1 or 2): ");
+            string choice = Console.ReadLine().Trim();
 
-            string expectedIf = $"if (choice == \"{choiceNumber}\")";
-            string expectedIf2 = $"if(choice == \"{choiceNumber}\")";
-            string expectedIf3 = $"if (choice==\"{choiceNumber}\")";
-            string expectedIf4 = $"if(choice==\"{choiceNumber}\")";
-
-            if (ifStatement.ToLower().Contains(expectedIf.ToLower()) || ifStatement.ToLower().Contains(expectedIf2.ToLower()) ||
-                ifStatement.ToLower().Contains(expectedIf3.ToLower()) || ifStatement.ToLower().Contains(expectedIf4.ToLower()))
+            if (choice == "1")
             {
-                Console.WriteLine("✓ Correct if statement structure!");
-                if (choiceNumber == "1") { weaponChoice = "Sword"; requiredWood = "Oak"; validChoice = true; Console.WriteLine("Nice choice! A sword is a versatile weapon."); }
-                else if (choiceNumber == "2") { weaponChoice = "Bow"; requiredWood = "Pine"; validChoice = true; Console.WriteLine("Excellent! A bow allows for ranged attacks."); }
-                else if (choiceNumber == "3") { weaponChoice = "Spear"; requiredWood = "Birch"; validChoice = true; Console.WriteLine("Great choice! A spear has good reach and power."); }
-                else if (choiceNumber == "4") { weaponChoice = "Axe"; requiredWood = "Maple"; validChoice = true; Console.WriteLine("Powerful choice! An axe deals heavy damage."); }
-                else { Console.WriteLine("Invalid choice number! Please choose 1-4."); Console.WriteLine("What's your choice number (1-4)?"); choiceNumber = Console.ReadLine(); }
+                Console.WriteLine("\nPlease enter your character's name:");
+                string playerName = Console.ReadLine();
+                player = new Player(playerName);
+                validChoice = true;
+                Console.WriteLine($"\nGreetings, {player.Name}! You are a brave traveler on a quest from Cape Town to Durban (1600 km).");
+                Console.WriteLine("Your journey will test your coding skills as you face challenges and foes.");
+                Console.WriteLine("Your inventory contains a bed, a sword, some meat, and new potions. More treasures await!");
+                Console.WriteLine("The sun rises as you begin your journey. Be mindful of day and night!");
+                Console.WriteLine("Daytime lasts for 3 actions, and night lasts for 3 actions.");
+                Console.WriteLine("Traveling at night doubles your distance but increases danger.");
+                Console.WriteLine("Resting at night will advance time to morning, adding remaining night turns to your day!");
+                Console.WriteLine("First, let's prepare you with a tutorial.");
+            }
+            else if (choice == "2")
+            {
+                player = LoadGame();
+                if (player != null)
+                {
+                    validChoice = true;
+                    Console.WriteLine($"\nWelcome back, {player.Name}! Your journey resumes.");
+                    Console.WriteLine($"You are at {player.CurrentLocation} ({player.Distance} km).");
+                    Console.WriteLine($"Health: {player.Health} HP, Energy: {player.Energy}, Time: {player.TimeOfDay}");
+                    Console.WriteLine($"Weapon: {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "None")}");
+                    Console.WriteLine($"Inventory: {string.Join(", ", player.Inventory.ConvertAll(item => item.Name))}");
+                    Console.WriteLine("Continue your quest to reach Durban!");
+                }
+                else
+                {
+                    Console.WriteLine("No saved game found or invalid save file. Please start a new game.");
+                }
             }
             else
             {
-                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
-                player.Health = Math.Max(0, player.Health - penalty);
-                Console.WriteLine("✗ Incorrect if statement. Try again!");
-                Console.WriteLine("Format: if (choice == \"" + choiceNumber + "\")");
-                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
-                if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                Console.WriteLine("Invalid choice! Please enter 1 or 2.");
             }
         }
 
-        Console.WriteLine($"For that you will need {requiredWood} Wood!");
-        Console.WriteLine("To go to the woods, you need to write a method call!");
-        Console.WriteLine("Let's continue the tutorial by gathering the wood.");
-
-        bool weaponCrafted = false;
-        while (!weaponCrafted)
+        // Tutorial for new game
+        if (player.Distance == 0 && player.Inventory.Count <= 2) // New game check
         {
-            Console.WriteLine("\n=== TUTORIAL: METHOD CALL TO ENTER THE WOODS ===");
-            Console.WriteLine("To enter the woods, write a method call:");
-            Console.WriteLine("Method name: EnterWoods()");
-            Console.WriteLine("Format: MethodName();");
+            Console.WriteLine("\n=== TUTORIAL: CREATE YOUR HEALTH VARIABLE ===");
+            Console.WriteLine("To start your journey, you need to declare your health variable!");
+            Console.WriteLine("Write the code to declare an integer variable called 'health' with value 100:");
+            Console.WriteLine("Example format: int variableName = value;");
 
-            Console.Write("Your code: ");
-            string methodCall = Console.ReadLine().Trim();
-
-            if (methodCall.ToLower() == "enterwoods();" || methodCall.ToLower() == "enterwoods()")
+            bool healthCreated = false;
+            while (!healthCreated)
             {
-                Console.WriteLine("✓ Correct method call!");
-                Console.WriteLine("\n=== TUTORIAL: ENTERING THE WOODS ===");
-                Console.WriteLine("You head into the woods...");
-                Console.WriteLine("There are lots of trees here but we want " + requiredWood + " Wood!");
-                Console.WriteLine("You see different types of trees:");
-                Console.WriteLine("- Oak trees (strong and dark)");
-                Console.WriteLine("- Pine trees (tall with needles)");
-                Console.WriteLine("- Birch trees (white bark)");
-                Console.WriteLine("- Maple trees (broad leaves)");
-                Console.WriteLine("- Willow trees (drooping branches)");
+                Console.Write("Your code: ");
+                string healthCode = Console.ReadLine().Trim();
 
-                Console.WriteLine("\n=== TUTORIAL: FOR LOOP TO SEARCH TREES ===");
-                Console.WriteLine("You need to search through trees. Write a for loop to check 5 trees:");
-                Console.WriteLine("Format: for (int i = 0; i < 5; i++)");
-
-                bool loopCorrect = false;
-                while (!loopCorrect)
+                if (healthCode.ToLower() == "int health = 100;" || healthCode.ToLower() == "int health=100;")
                 {
-                    Console.Write("Your code: ");
-                    string forLoop = Console.ReadLine().Trim();
-
-                    if (forLoop.ToLower().Contains("for") && forLoop.ToLower().Contains("int i") &&
-                        forLoop.ToLower().Contains("i < 5") && forLoop.ToLower().Contains("i++"))
-                    {
-                        Console.WriteLine("✓ Correct for loop!");
-                        loopCorrect = true;
-                        Console.WriteLine("Executing your loop...");
-                        for (int i = 0; i < 5; i++) { Console.WriteLine($"Checking tree {i + 1}..."); Thread.Sleep(500); }
-                    }
-                    else
-                    {
-                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
-                        player.Health = Math.Max(0, player.Health - penalty);
-                        Console.WriteLine("✗ Incorrect loop. Try again!");
-                        Console.WriteLine("Format: for (int i = 0; i < 5; i++)");
-                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
-                        if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
-                    }
+                    Console.WriteLine("✓ Correct! Your health is now set to 100!");
+                    healthCreated = true;
                 }
-
-                bool correctTreeFound = false;
-                while (!correctTreeFound)
+                else
                 {
-                    Console.WriteLine("\n=== TUTORIAL: STRING COMPARISON TO FIND THE RIGHT TREE ===");
-                    Console.WriteLine($"Write code to check if a tree type equals \"{requiredWood}\":");
-                    Console.WriteLine("Format: if (treeType == \"TreeName\")");
-                    Console.WriteLine($"You need {requiredWood} Wood!");
-
-                    Console.Write("Your code: ");
-                    string comparison = Console.ReadLine().Trim();
-
-                    string expectedComparison = $"if (treetype == \"{requiredWood.ToLower()}\")";
-                    string expectedComparison2 = $"if(treetype == \"{requiredWood.ToLower()}\")";
-                    string expectedComparison3 = $"if (treetype==\"{requiredWood.ToLower()}\")";
-
-                    if (comparison.ToLower() == expectedComparison || comparison.ToLower() == expectedComparison2 ||
-                        comparison.ToLower() == expectedComparison3 || comparison.ToLower().Contains($"treetype == \"{requiredWood.ToLower()}\""))
-                    {
-                        Console.WriteLine("✓ Correct string comparison!");
-                        Console.WriteLine($"Perfect! You found the {requiredWood} tree!");
-                        Console.WriteLine("*CHOP* *CHOP* *CHOP*");
-                        Console.WriteLine($"You successfully cut down the {requiredWood} tree and collected {requiredWood} Wood!");
-                        player.Inventory.Add(new Item { Name = requiredWood + " Wood", Type = ItemType.Material });
-
-                        Console.WriteLine("\n=== TUTORIAL: CREATE WEAPON OBJECT ===");
-                        Console.WriteLine($"Now craft your {weaponChoice} by creating a Weapon object!");
-                        Console.WriteLine("The Weapon class has properties: Name (string), Damage (int), Defense (int).");
-                        Console.WriteLine($"Write code to create a {weaponChoice} with appropriate values:");
-                        Console.WriteLine($"Example: Weapon sword = new Weapon {{ Name = \"Sword\", Damage = 25, Defense = 10 }};");
-                        Console.WriteLine($"Suggested values for {weaponChoice}:");
-                        string expectedCode = ""; int expectedDamage = 0; int expectedDefense = 0;
-                        switch (weaponChoice)
-                        {
-                            case "Sword": Console.WriteLine("Damage: 25, Defense: 10"); expectedCode = $"weapon sword = new weapon {{ name = \"sword\", damage = 25, defense = 10 }}"; expectedDamage = 25; expectedDefense = 10; break;
-                            case "Bow": Console.WriteLine("Damage: 20, Defense: 5"); expectedCode = $"weapon bow = new weapon {{ name = \"bow\", damage = 20, defense = 5 }}"; expectedDamage = 20; expectedDefense = 5; break;
-                            case "Spear": Console.WriteLine("Damage: 22, Defense: 8"); expectedCode = $"weapon spear = new weapon {{ name = \"spear\", damage = 22, defense = 8 }}"; expectedDamage = 22; expectedDefense = 8; break;
-                            case "Axe": Console.WriteLine("Damage: 30, Defense: 12"); expectedCode = $"weapon axe = new weapon {{ name = \"axe\", damage = 30, defense = 12 }}"; expectedDamage = 30; expectedDefense = 12; break;
-                        }
-
-                        bool objectCreated = false;
-                        while (!objectCreated)
-                        {
-                            Console.Write("Your code: ");
-                            string objectCode = Console.ReadLine().Trim().ToLower();
-                            string normalizedInput = objectCode.Replace(" ", "").Replace("{", " { ").Replace("}", " } ");
-                            string normalizedExpected = expectedCode.Replace(" ", "").Replace("{", " { ").Replace("}", " } ");
-
-                            if (normalizedInput.Contains($"newweapon{{name=\"{weaponChoice.ToLower()}\",damage={expectedDamage},defense={expectedDefense}}}") ||
-                                normalizedInput.Contains($"newweapon{{name=\"{weaponChoice.ToLower()}\",defense={expectedDefense},damage={expectedDamage}}}"))
-                            {
-                                Console.WriteLine("✓ Correct! You created your weapon!");
-                                player.CraftWeapon(new Weapon { Name = weaponChoice, Damage = expectedDamage, Defense = expectedDefense });
-                                Console.WriteLine($"\n=== TUTORIAL: CRAFTING {weaponChoice.ToUpper()} ===");
-                                Console.WriteLine("Crafting in progress...");
-                                for (int i = 1; i <= 3; i++) { Console.WriteLine($"Crafting... {i}/3"); Thread.Sleep(1000); }
-                                Console.WriteLine($"SUCCESS! You have crafted a {weaponChoice}!");
-                                Console.WriteLine("Tutorial complete! You're now ready to begin your journey.");
-                                player.Inventory.Add(new Item { Name = "Health Potion", Type = ItemType.Consumable });
-                                player.Inventory.Add(new Item { Name = "Map Scroll", Type = ItemType.Tool });
-                                player.Inventory.Add(new Item { Name = "Health Regen Potion", Type = ItemType.Consumable });
-                                player.Inventory.Add(new Item { Name = "Instant Kill Potion", Type = ItemType.Consumable });
-                                player.Inventory.Add(new Item { Name = "Defense Boost Potion", Type = ItemType.Consumable });
-                                player.Inventory.Add(new Item { Name = "Revival Potion", Type = ItemType.Consumable });
-                                Console.WriteLine("You also find a Health Potion, Map Scroll, and new potions in your bag!");
-                                objectCreated = true; weaponCrafted = true; correctTreeFound = true;
-                            }
-                            else
-                            {
-                                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
-                                player.Health = Math.Max(0, player.Health - penalty);
-                                Console.WriteLine($"✗ Incorrect. Try again! Expected: {expectedCode}");
-                                Console.WriteLine($"Make sure Name = \"{weaponChoice}\", Damage = {expectedDamage}, Defense = {expectedDefense}");
-                                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
-                                if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
-                        player.Health = Math.Max(0, player.Health - penalty);
-                        Console.WriteLine("✗ Incorrect string comparison. Try again!");
-                        Console.WriteLine($"Format: if (treeType == \"{requiredWood}\")");
-                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
-                        if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
-                    }
+                    player.Health = Math.Max(0, player.Health - 10);
+                    Console.WriteLine("✗ Incorrect. Try again! Format: int health = 100;");
+                    Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                    if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
                 }
             }
-            else
+
+            // Rest of the tutorial (weapon crafting, etc.) remains unchanged
+            Console.WriteLine("\n=== TUTORIAL: WEAPON CRAFTING - IF STATEMENT CHALLENGE ===");
+            Console.WriteLine("In this tutorial, you'll craft a weapon for your journey.");
+            Console.WriteLine("Choose your weapon type by writing an if statement:");
+            Console.WriteLine("Available weapons:");
+            Console.WriteLine("1. Sword (requires Oak Wood)");
+            Console.WriteLine("2. Bow (requires Pine Wood)");
+            Console.WriteLine("3. Spear (requires Birch Wood)");
+            Console.WriteLine("4. Axe (requires Maple Wood)");
+
+            string weaponChoice = "";
+            string requiredWood = "";
+            bool validWeaponChoice = false;
+
+            Console.WriteLine("\nWrite an if statement to check weapon choice:");
+            Console.WriteLine("Example: if (choice == \"1\") { weapon = \"Sword\"; }");
+            Console.WriteLine("First, what's your choice number (1-4)?");
+            string choiceNumber = Console.ReadLine();
+
+            while (!validWeaponChoice)
             {
-                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
-                player.Health = Math.Max(0, player.Health - penalty);
-                Console.WriteLine("✗ Incorrect method call. Try again!");
-                Console.WriteLine("Format: EnterWoods();");
-                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
-                if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                Console.WriteLine($"Now write the if statement for choice {choiceNumber}:");
+                Console.Write("Your code: ");
+                string ifStatement = Console.ReadLine().Trim();
+
+                string expectedIf = $"if (choice == \"{choiceNumber}\")";
+                string expectedIf2 = $"if(choice == \"{choiceNumber}\")";
+                string expectedIf3 = $"if (choice==\"{choiceNumber}\")";
+                string expectedIf4 = $"if(choice==\"{choiceNumber}\")";
+
+                if (ifStatement.ToLower().Contains(expectedIf.ToLower()) || ifStatement.ToLower().Contains(expectedIf2.ToLower()) ||
+                    ifStatement.ToLower().Contains(expectedIf3.ToLower()) || ifStatement.ToLower().Contains(expectedIf4.ToLower()))
+                {
+                    Console.WriteLine("✓ Correct if statement structure!");
+                    if (choiceNumber == "1") { weaponChoice = "Sword"; requiredWood = "Oak"; validWeaponChoice = true; Console.WriteLine("Nice choice! A sword is a versatile weapon."); }
+                    else if (choiceNumber == "2") { weaponChoice = "Bow"; requiredWood = "Pine"; validWeaponChoice = true; Console.WriteLine("Excellent! A bow allows for ranged attacks."); }
+                    else if (choiceNumber == "3") { weaponChoice = "Spear"; requiredWood = "Birch"; validWeaponChoice = true; Console.WriteLine("Great choice! A spear has good reach and power."); }
+                    else if (choiceNumber == "4") { weaponChoice = "Axe"; requiredWood = "Maple"; validWeaponChoice = true; Console.WriteLine("Powerful choice! An axe deals heavy damage."); }
+                    else { Console.WriteLine("Invalid choice number! Please choose 1-4."); Console.WriteLine("What's your choice number (1-4)?"); choiceNumber = Console.ReadLine(); }
+                }
+                else
+                {
+                    int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                    player.Health = Math.Max(0, player.Health - penalty);
+                    Console.WriteLine("✗ Incorrect if statement. Try again!");
+                    Console.WriteLine("Format: if (choice == \"" + choiceNumber + "\")");
+                    Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                    if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                }
             }
-            player.AdvanceTime();
+
+            // Continue with weapon crafting tutorial (unchanged)
+            Console.WriteLine($"For that you will need {requiredWood} Wood!");
+            Console.WriteLine("To go to the woods, you need to write a method call!");
+            Console.WriteLine("Let's continue the tutorial by gathering the wood.");
+
+            bool weaponCrafted = false;
+            while (!weaponCrafted)
+            {
+                Console.WriteLine("\n=== TUTORIAL: METHOD CALL TO ENTER THE WOODS ===");
+                Console.WriteLine("To enter the woods, write a method call:");
+                Console.WriteLine("Method name: EnterWoods()");
+                Console.WriteLine("Format: MethodName();");
+
+                Console.Write("Your code: ");
+                string methodCall = Console.ReadLine().Trim();
+
+                if (methodCall.ToLower() == "enterwoods();" || methodCall.ToLower() == "enterwoods()")
+                {
+                    Console.WriteLine("✓ Correct method call!");
+                    Console.WriteLine("\n=== TUTORIAL: ENTERING THE WOODS ===");
+                    Console.WriteLine("You head into the woods...");
+                    Console.WriteLine("There are lots of trees here but we want " + requiredWood + " Wood!");
+                    Console.WriteLine("You see different types of trees:");
+                    Console.WriteLine("- Oak trees (strong and dark)");
+                    Console.WriteLine("- Pine trees (tall with needles)");
+                    Console.WriteLine("- Birch trees (white bark)");
+                    Console.WriteLine("- Maple trees (broad leaves)");
+                    Console.WriteLine("- Willow trees (drooping branches)");
+
+                    Console.WriteLine("\n=== TUTORIAL: FOR LOOP TO SEARCH TREES ===");
+                    Console.WriteLine("You need to search through trees. Write a for loop to check 5 trees:");
+                    Console.WriteLine("Format: for (int i = 0; i < 5; i++)");
+
+                    bool loopCorrect = false;
+                    while (!loopCorrect)
+                    {
+                        Console.Write("Your code: ");
+                        string forLoop = Console.ReadLine().Trim();
+
+                        if (forLoop.ToLower().Contains("for") && forLoop.ToLower().Contains("int i") &&
+                            forLoop.ToLower().Contains("i < 5") && forLoop.ToLower().Contains("i++"))
+                        {
+                            Console.WriteLine("✓ Correct for loop!");
+                            loopCorrect = true;
+                            Console.WriteLine("Executing your loop...");
+                            for (int i = 0; i < 5; i++) { Console.WriteLine($"Checking tree {i + 1}..."); Thread.Sleep(500); }
+                        }
+                        else
+                        {
+                            int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                            player.Health = Math.Max(0, player.Health - penalty);
+                            Console.WriteLine("✗ Incorrect loop. Try again!");
+                            Console.WriteLine("Format: for (int i = 0; i < 5; i++)");
+                            Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                            if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                        }
+                    }
+
+                    bool correctTreeFound = false;
+                    while (!correctTreeFound)
+                    {
+                        Console.WriteLine("\n=== TUTORIAL: STRING COMPARISON TO FIND THE RIGHT TREE ===");
+                        Console.WriteLine($"Write code to check if a tree type equals \"{requiredWood}\":");
+                        Console.WriteLine("Format: if (treeType == \"TreeName\")");
+                        Console.WriteLine($"You need {requiredWood} Wood!");
+
+                        Console.Write("Your code: ");
+                        string comparison = Console.ReadLine().Trim();
+
+                        string expectedComparison = $"if (treetype == \"{requiredWood.ToLower()}\")";
+                        string expectedComparison2 = $"if(treetype == \"{requiredWood.ToLower()}\")";
+                        string expectedComparison3 = $"if (treetype==\"{requiredWood.ToLower()}\")";
+
+                        if (comparison.ToLower() == expectedComparison || comparison.ToLower() == expectedComparison2 ||
+                            comparison.ToLower() == expectedComparison3 || comparison.ToLower().Contains($"treetype == \"{requiredWood.ToLower()}\""))
+                        {
+                            Console.WriteLine("✓ Correct string comparison!");
+                            Console.WriteLine($"Perfect! You found the {requiredWood} tree!");
+                            Console.WriteLine("*CHOP* *CHOP* *CHOP*");
+                            Console.WriteLine($"You successfully cut down the {requiredWood} tree and collected {requiredWood} Wood!");
+                            player.Inventory.Add(new Item { Name = requiredWood + " Wood", Type = ItemType.Material });
+
+                            Console.WriteLine("\n=== TUTORIAL: CREATE WEAPON OBJECT ===");
+                            Console.WriteLine($"Now craft your {weaponChoice} by creating a Weapon object!");
+                            Console.WriteLine("The Weapon class has properties: Name (string), Damage (int), Defense (int).");
+                            Console.WriteLine($"Write code to create a {weaponChoice} with appropriate values:");
+                            Console.WriteLine($"Example: Weapon sword = new Weapon {{ Name = \"Sword\", Damage = 25, Defense = 10 }};");
+                            Console.WriteLine($"Suggested values for {weaponChoice}:");
+                            string expectedCode = ""; int expectedDamage = 0; int expectedDefense = 0;
+                            switch (weaponChoice)
+                            {
+                                case "Sword": Console.WriteLine("Damage: 25, Defense: 10"); expectedCode = $"weapon sword = new weapon {{ name = \"sword\", damage = 25, defense = 10 }}"; expectedDamage = 25; expectedDefense = 10; break;
+                                case "Bow": Console.WriteLine("Damage: 20, Defense: 5"); expectedCode = $"weapon bow = new weapon {{ name = \"bow\", damage = 20, defense = 5 }}"; expectedDamage = 20; expectedDefense = 5; break;
+                                case "Spear": Console.WriteLine("Damage: 22, Defense: 8"); expectedCode = $"weapon spear = new weapon {{ name = \"spear\", damage = 22, defense = 8 }}"; expectedDamage = 22; expectedDefense = 8; break;
+                                case "Axe": Console.WriteLine("Damage: 30, Defense: 12"); expectedCode = $"weapon axe = new weapon {{ name = \"axe\", damage = 30, defense = 12 }}"; expectedDamage = 30; expectedDefense = 12; break;
+                            }
+
+                            bool objectCreated = false;
+                            while (!objectCreated)
+                            {
+                                Console.Write("Your code: ");
+                                string objectCode = Console.ReadLine().Trim().ToLower();
+                                string normalizedInput = objectCode.Replace(" ", "").Replace("{", " { ").Replace("}", " } ");
+                                string normalizedExpected = expectedCode.Replace(" ", "").Replace("{", " { ").Replace("}", " } ");
+
+                                if (normalizedInput.Contains($"newweapon{{name=\"{weaponChoice.ToLower()}\",damage={expectedDamage},defense={expectedDefense}}}") ||
+                                    normalizedInput.Contains($"newweapon{{name=\"{weaponChoice.ToLower()}\",defense={expectedDefense},damage={expectedDamage}}}"))
+                                {
+                                    Console.WriteLine("✓ Correct! You created your weapon!");
+                                    player.CraftWeapon(new Weapon { Name = weaponChoice, Damage = expectedDamage, Defense = expectedDefense });
+                                    Console.WriteLine($"\n=== TUTORIAL: CRAFTING {weaponChoice.ToUpper()} ===");
+                                    Console.WriteLine("Crafting in progress...");
+                                    for (int i = 1; i <= 3; i++) { Console.WriteLine($"Crafting... {i}/3"); Thread.Sleep(1000); }
+                                    Console.WriteLine($"SUCCESS! You have crafted a {weaponChoice}!");
+                                    Console.WriteLine("Tutorial complete! You're now ready to begin your journey.");
+                                    player.Inventory.Add(new Item { Name = "Health Potion", Type = ItemType.Consumable });
+                                    player.Inventory.Add(new Item { Name = "Map Scroll", Type = ItemType.Tool });
+                                    player.Inventory.Add(new Item { Name = "Health Regen Potion", Type = ItemType.Consumable });
+                                    player.Inventory.Add(new Item { Name = "Instant Kill Potion", Type = ItemType.Consumable });
+                                    player.Inventory.Add(new Item { Name = "Defense Boost Potion", Type = ItemType.Consumable });
+                                    player.Inventory.Add(new Item { Name = "Revival Potion", Type = ItemType.Consumable });
+                                    Console.WriteLine("You also find a Health Potion, Map Scroll, and new potions in your bag!");
+                                    objectCreated = true; weaponCrafted = true; correctTreeFound = true;
+                                }
+                                else
+                                {
+                                    int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                                    player.Health = Math.Max(0, player.Health - penalty);
+                                    Console.WriteLine($"✗ Incorrect. Try again! Expected: {expectedCode}");
+                                    Console.WriteLine($"Make sure Name = \"{weaponChoice}\", Damage = {expectedDamage}, Defense = {expectedDefense}");
+                                    Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                                    if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                            player.Health = Math.Max(0, player.Health - penalty);
+                            Console.WriteLine("✗ Incorrect string comparison. Try again!");
+                            Console.WriteLine($"Format: if (treeType == \"{requiredWood}\")");
+                            Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                            if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                        }
+                    }
+                }
+                else
+                {
+                    int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                    player.Health = Math.Max(0, player.Health - penalty);
+                    Console.WriteLine("✗ Incorrect method call. Try again!");
+                    Console.WriteLine("Format: EnterWoods();");
+                    Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                    if (player.Health <= 0) { Console.WriteLine("Game Over! You have died due to low health."); return; }
+                }
+                player.AdvanceTime();
+            }
         }
 
         Console.WriteLine("\n=== JOURNEY BEGINS ===");
-        Console.WriteLine("With your weapon crafted, the tutorial is over. Your goal is to reach Durban and prove your coding skills!");
+        Console.WriteLine("With your weapon crafted, your goal is to reach Durban and prove your coding skills!");
         Console.WriteLine("You'll face mighty foes and discover legendary locations along the way.");
 
+        // Rest of the game loop remains unchanged
         while (player.Health > 0 || player.RevivalUsed)
         {
             UpdateLocation(player);
@@ -448,6 +492,38 @@ class Program
         Console.ReadLine();
     }
 
+    // New LoadGame method
+    static Player LoadGame()
+    {
+        try
+        {
+            if (File.Exists("savegame.json"))
+            {
+                string json = File.ReadAllText("savegame.json");
+                Player player = JsonConvert.DeserializeObject<Player>(json);
+                if (player != null)
+                {
+                    // Ensure inventory is initialized properly
+                    if (player.Inventory == null)
+                    {
+                        player.Inventory = new List<Item>
+                        {
+                            new Item { Name = "Bed", Type = ItemType.Tool },
+                            new Item { Name = "Meat", Type = ItemType.Consumable }
+                        };
+                    }
+                    return player;
+                }
+            }
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading game: {ex.Message}");
+            return null;
+        }
+    }
+
     static void UpdateLocation(Player player)
     {
         foreach (var location in MapLocations)
@@ -480,7 +556,7 @@ class Program
         {
             Enemy enemy = Program.random.Next(2) == 0 ? new Enemy { Health = 50, Name = "Goblin", Type = EnemyType.Goblin } : new Enemy { Health = 60, Name = "Wolf", Type = EnemyType.Wolf };
             Console.WriteLine($"A wild {enemy.Name} appears!");
-            StartEncounterCombat(player, enemy); // Fixed: Call the correct method
+            StartEncounterCombat(player, enemy);
         }
         else if (eventChance <= 50)
         {
@@ -567,7 +643,7 @@ class Program
                     if (enemy.Health <= 0)
                     {
                         Console.WriteLine($"You defeated the {enemy.Name}! Well done.");
-                        DropRandomPotion(player); // Add potion drop
+                        DropRandomPotion(player);
                         break;
                     }
 
@@ -647,10 +723,11 @@ class Program
     {
         if (Program.random.Next(100) < 50) // 50% chance
         {
-            string[] potions = new string[] { /* ... */ };
+            string[] potions = new string[] { "Health Potion", "Stealth Potion", "Frostbite Potion", "Health Regen Potion", "Instant Kill Potion", "Defense Boost Potion" };
             string selectedPotion = potions[Program.random.Next(potions.Length)];
             Item potionItem = new Item { Name = selectedPotion, Type = ItemType.Consumable };
             player.PickUp(potionItem);
+            Console.WriteLine($"The enemy dropped a {selectedPotion}!");
         }
         else
         {
@@ -668,7 +745,7 @@ class Program
 
     static void SaveGame(Player player)
     {
-        string json = JsonConvert.SerializeObject(player);
+        string json = JsonConvert.SerializeObject(player, Formatting.Indented);
         File.WriteAllText("savegame.json", json);
         Console.WriteLine("Your progress has been saved.");
     }

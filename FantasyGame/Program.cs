@@ -355,8 +355,8 @@ class Program
         }
 
         Console.WriteLine("\n=== JOURNEY BEGINS ===");
-        Console.WriteLine("With your weapon crafted, the tutorial is over. Your goal is to survive the journey while managing your health, energy, and resources.");
-        Console.WriteLine("You'll need to write code for each action!");
+        Console.WriteLine("With your weapon crafted, the tutorial is over. Your goal is to reach Durban and prove your coding skills!");
+        Console.WriteLine("You'll face mini-bosses along the way, each teaching you a new skill.");
 
         while (player.Health > 0)
         {
@@ -408,10 +408,191 @@ class Program
                             Console.WriteLine("You walk east toward Durban, covering 100 km.");
                             Console.WriteLine("Energy cost: -10. Current energy: " + player.Energy);
                             RandomEvent(player);
-                        }
-                        else
-                        {
-                            Console.WriteLine("You don't have enough energy to walk! Need at least 10 energy.");
+
+                            // Enhanced Mini-Boss Encounters
+                            if (player.Distance >= 400 && player.Distance < 800 && !player.HasDefeatedGoblinKing)
+                            {
+                                Console.WriteLine("\n=== MINI-BOSS: MIRROR GOBLIN (400 km) ===");
+                                Console.WriteLine("A hideous Goblin blocks your path! But wait... it's terrified of its own reflection!");
+                                Console.WriteLine("Legend says goblins are so ugly they flee when they see themselves.");
+                                Console.WriteLine("You need to create a magic mirror grid to trap its reflection!");
+                                Console.WriteLine("The mirror must be a 3x3 grid to capture the goblin's essence.");
+                                Console.WriteLine("\nCODING CHALLENGE: Create a 3x3 mirror grid (2D array)");
+                                Console.WriteLine("Hint: A mirror reflects in all directions - you need a grid!");
+                                Console.WriteLine("Format: string[,] mirror = new string[3,3];");
+
+                                bool mirrorCreated = false;
+                                while (!mirrorCreated)
+                                {
+                                    Console.Write("Your code: ");
+                                    string arrayCode = Console.ReadLine().Trim();
+                                    if (arrayCode.ToLower().Contains("string[,]") && arrayCode.ToLower().Contains("new string[3,3]"))
+                                    {
+                                        Console.WriteLine("✓ Perfect! The magic mirror grid forms!");
+                                        Console.WriteLine("The goblin sees its reflection in all 9 mirror sections and flees in terror!");
+                                        Console.WriteLine("'NOOO! MY HIDEOUS FACE!' *The goblin runs away screaming*");
+                                        mirrorCreated = true;
+                                        player.HasDefeatedGoblinKing = true;
+                                        // No actual combat needed - goblin flees
+                                        Console.WriteLine("Victory! You've learned to create 2D arrays - the foundation of game boards!");
+                                    }
+                                    else
+                                    {
+                                        player.Health = Math.Max(0, player.Health - 10);
+                                        Console.WriteLine("✗ The mirror cracks! The goblin attacks while you're distracted!");
+                                        Console.WriteLine("Format: string[,] mirror = new string[3,3];");
+                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        if (player.Health <= 0)
+                                        {
+                                            Console.WriteLine("Game Over! The goblin's ugly face was the last thing you saw.");
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (player.Distance >= 800 && player.Distance < 1200 && !player.HasDefeatedWolfPackLeader)
+                            {
+                                Console.WriteLine("\n=== MINI-BOSS: THE PATROL CAPTAIN (800 km) ===");
+                                Console.WriteLine("A heavily armored Patrol Captain blocks the bridge!");
+                                Console.WriteLine("'HALT! To pass, you must inspect every section of my guard tower!'");
+                                Console.WriteLine("The tower is a 3x3 structure. You must check each room systematically.");
+                                Console.WriteLine("The Captain won't let you pass until you prove you can search thoroughly!");
+                                Console.WriteLine("\nCODING CHALLENGE: Search every room of the 3x3 tower");
+                                Console.WriteLine("Hint: You need to go through each floor (row) and each room (column)!");
+                                Console.WriteLine("Format: for (int floor = 0; floor < 3; floor++) { for (int room = 0; room < 3; room++) { } }");
+
+                                bool searchCompleted = false;
+                                while (!searchCompleted)
+                                {
+                                    Console.Write("Your code: ");
+                                    string loopCode = Console.ReadLine().Trim();
+                                    if (loopCode.ToLower().Contains("for") && loopCode.ToLower().Contains("int") &&
+                                        loopCode.ToLower().Contains("< 3") && loopCode.ToLower().Contains("for") &&
+                                        loopCode.Count(c => c == '{') >= 2) // Check for nested structure
+                                    {
+                                        Console.WriteLine("✓ Excellent! You systematically search every room!");
+                                        Console.WriteLine("The Captain watches as you methodically check:");
+                                        Console.WriteLine("Floor 0: Room 0, Room 1, Room 2");
+                                        Console.WriteLine("Floor 1: Room 0, Room 1, Room 2");
+                                        Console.WriteLine("Floor 2: Room 0, Room 1, Room 2");
+                                        Console.WriteLine("'Impressive! You understand systematic searching. You may pass!'");
+                                        searchCompleted = true;
+                                        player.HasDefeatedWolfPackLeader = true;
+                                        Console.WriteLine("Victory! You've mastered nested loops - essential for checking game boards!");
+                                    }
+                                    else
+                                    {
+                                        player.Health = Math.Max(0, player.Health - 10);
+                                        Console.WriteLine("✗ Your search is chaotic! The Captain attacks your sloppy technique!");
+                                        Console.WriteLine("Format: for (int floor = 0; floor < 3; floor++) { for (int room = 0; room < 3; room++) { } }");
+                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        if (player.Health <= 0)
+                                        {
+                                            Console.WriteLine("Game Over! The Captain's discipline was too much for you.");
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (player.Distance >= 1200 && player.Distance < 1600 && !player.HasDefeatedDragonApprentice)
+                            {
+                                Console.WriteLine("\n=== MINI-BOSS: THE MYSTIC FORTUNE TELLER (1200 km) ===");
+                                Console.WriteLine("A mysterious Fortune Teller sits at a crossroads with a crystal grid.");
+                                Console.WriteLine("'Traveler! To pass, you must divine the secret of victory!'");
+                                Console.WriteLine("She points to her mystical 3x3 crystal array:");
+                                Console.WriteLine("[ X ][ X ][ X ]");
+                                Console.WriteLine("[ O ][ ? ][ O ]");
+                                Console.WriteLine("[ X ][ O ][ X ]");
+                                Console.WriteLine("'Tell me, when do three crystals align in mystical harmony?'");
+                                Console.WriteLine("You realize - she's asking about winning conditions!");
+                                Console.WriteLine("\nCODING CHALLENGE: Detect when three X's align in the top row");
+                                Console.WriteLine("Format: if (crystals[0,0] == \"X\" && crystals[0,1] == \"X\" && crystals[0,2] == \"X\")");
+
+                                bool divination = false;
+                                while (!divination)
+                                {
+                                    Console.Write("Your code: ");
+                                    string winCode = Console.ReadLine().Trim();
+                                    if (winCode.ToLower().Contains("if") && winCode.ToLower().Contains("crystals[0,0]") &&
+                                        winCode.ToLower().Contains("crystals[0,1]") && winCode.ToLower().Contains("crystals[0,2]") &&
+                                        winCode.ToLower().Contains("== \"x\"") && winCode.ToLower().Contains("&&"))
+                                    {
+                                        Console.WriteLine("✓ Brilliant! You understand the mystical pattern!");
+                                        Console.WriteLine("The Fortune Teller's eyes glow: 'You see the truth of alignment!'");
+                                        Console.WriteLine("'Three elements in harmony spell victory - in crystals or code!'");
+                                        Console.WriteLine("She waves her hand and vanishes: 'The path to Durban is clear!'");
+                                        divination = true;
+                                        player.HasDefeatedDragonApprentice = true;
+                                        Console.WriteLine("Victory! You've learned win condition checking - the heart of any game!");
+                                    }
+                                    else
+                                    {
+                                        player.Health = Math.Max(0, player.Health - 10);
+                                        Console.WriteLine("✗ The crystals crack from your confusion! Dark energy lashes out!");
+                                        Console.WriteLine("Format: if (crystals[0,0] == \"X\" && crystals[0,1] == \"X\" && crystals[0,2] == \"X\")");
+                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        if (player.Health <= 0)
+                                        {
+                                            Console.WriteLine("Game Over! The mystical energies consumed you.");
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (player.Distance >= 1600 && !player.HasDefeatedDragonMaster)
+                            {
+                                Console.WriteLine("\n=== FINAL SHOWDOWN: THE GRAND CODE MASTER OF DURBAN ===");
+                                Console.WriteLine("You arrive in Durban to find the legendary Grand Code Master!");
+                                Console.WriteLine("'Welcome, traveler! I've been watching your journey.'");
+                                Console.WriteLine("'You've learned about grids, systematic searching, and victory conditions.'");
+                                Console.WriteLine("'Now... create the ultimate game board - a place where players battle!'");
+                                Console.WriteLine("'Show me you can create a method to place a mark on any position!'");
+                                Console.WriteLine("\nFINAL CHALLENGE: Create a method to place a mark on the game board");
+                                Console.WriteLine("This will let players take turns and make their moves!");
+                                Console.WriteLine("Format: public void PlaceMove(string[,] board, int row, int col, string player) { board[row,col] = player; }");
+
+                                bool masterChallenge = false;
+                                while (!masterChallenge)
+                                {
+                                    Console.Write("Your code: ");
+                                    string masterCode = Console.ReadLine().Trim(); // Changed from moveCode to masterCode
+                                    if (masterCode.ToLower().Contains("public void") && masterCode.ToLower().Contains("placemove") &&
+                                        masterCode.ToLower().Contains("string[,] board") && masterCode.ToLower().Contains("int row") &&
+                                        masterCode.ToLower().Contains("int col") && masterCode.ToLower().Contains("string player") &&
+                                        masterCode.ToLower().Contains("board[row,col] = player"))
+                                    {
+                                        Console.WriteLine("✓ MAGNIFICENT! You are truly a Code Master!");
+                                        Console.WriteLine("The Grand Code Master smiles proudly:");
+                                        Console.WriteLine("'You understand the essence of interactive games!'");
+                                        Console.WriteLine("'With grids, loops, conditions, and player actions...'");
+                                        Console.WriteLine("'You can create Tic Tac Toe - or any board game!'");
+                                        masterChallenge = true;
+                                        player.HasDefeatedDragonMaster = true;
+
+                                        Console.WriteLine("\n🎉 ULTIMATE VICTORY! 🎉");
+                                        Console.WriteLine("You have completed the Traveler's Journey!");
+                                        Console.WriteLine("You now possess all the skills needed to code Tic Tac Toe:");
+                                        Console.WriteLine("✓ 2D Arrays for the game board");
+                                        Console.WriteLine("✓ Nested loops to check positions");
+                                        Console.WriteLine("✓ Conditional logic for win detection");
+                                        Console.WriteLine("✓ Methods for player actions");
+                                        Console.WriteLine("\nGo forth and create amazing games, Code Master!");
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        player.Health = Math.Max(0, player.Health - 10);
+                                        Console.WriteLine("✗ The Code Master shakes his head: 'Not quite right, young one.'");
+                                        Console.WriteLine("Format: public void PlaceMove(string[,] board, int row, int col, string player) { board[row,col] = player; }");
+                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        if (player.Health <= 0)
+                                        {
+                                            Console.WriteLine("Game Over! You weren't ready for the final challenge.");
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     else if (moveType == "run")
@@ -433,12 +614,6 @@ class Program
                     else
                     {
                         Console.WriteLine("Invalid movement type! Use 'walk' or 'run'.");
-                    }
-
-                    if (player.Distance >= 1600)
-                    {
-                        Console.WriteLine("Congratulations! You've reached Durban!");
-                        break;
                     }
                 }
                 else
@@ -658,6 +833,10 @@ class Player
         new Item { Name = "Bed", Type = ItemType.Tool },
         new Item { Name = "Meat", Type = ItemType.Consumable }
     };
+    public bool HasDefeatedGoblinKing { get; set; } = false;
+    public bool HasDefeatedWolfPackLeader { get; set; } = false;
+    public bool HasDefeatedDragonApprentice { get; set; } = false;
+    public bool HasDefeatedDragonMaster { get; set; } = false;
 
     public Player(string name)
     {
@@ -749,12 +928,19 @@ class Enemy
 
     public int Attack()
     {
-        return Type == EnemyType.Goblin ? 15 : 20;
+        switch (Type)
+        {
+            case EnemyType.Goblin: return 15;
+            case EnemyType.Wolf: return 20;
+            case EnemyType.Dragon: return 25;
+            default: return 10;
+        }
     }
 }
 
 enum EnemyType
 {
     Goblin,
-    Wolf
+    Wolf,
+    Dragon
 }

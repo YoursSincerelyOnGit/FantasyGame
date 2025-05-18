@@ -7,12 +7,21 @@ using System.Collections.Generic;
 class Program
 {
     static Random random = new Random();
+    // Make MapLocations public static to allow access from other classes
+    public static readonly Dictionary<int, string> MapLocations = new Dictionary<int, string>
+    {
+        { 0, "Cape Town: The Starting Shores" },
+        { 400, "Forest of Echoes" },
+        { 800, "Bridge of Valor" },
+        { 1200, "Mystic Crossroads" },
+        { 1600, "Durban: The Code Master's Domain" }
+    };
 
     static void Main()
     {
         // Prompt the player for their character name
         Console.WriteLine("Welcome to the Traveler's Journey - Programming Edition!");
-        Console.WriteLine("In this game, you'll need to write code to perform actions!");
+        Console.WriteLine("Embark on an epic quest from Cape Town to Durban, mastering the art of coding!");
         Console.WriteLine("Before we begin, please enter your character's name:");
         string playerName = Console.ReadLine();
 
@@ -20,9 +29,14 @@ class Program
         Player player = new Player(playerName);
 
         // Intro to the Game
-        Console.WriteLine($"Hello, {player.Name}! You are a traveler making your way from Cape Town to Durban (1600 km).");
-        Console.WriteLine("Your inventory includes a bed, sword, and some meat.");
-        Console.WriteLine("First, let's go through a tutorial to prepare you for the journey!");
+        Console.WriteLine($"\nGreetings, {player.Name}! You are a brave traveler on a quest from Cape Town to Durban (1600 km).");
+        Console.WriteLine("Your journey will test your coding skills as you face challenges and foes.");
+        Console.WriteLine("Your inventory contains a bed, a sword, and some meat. More treasures await!");
+        Console.WriteLine("The sun rises as you begin your journey. Be mindful of day and night!");
+        Console.WriteLine("Daytime lasts for 3 actions, and night lasts for 3 actions.");
+        Console.WriteLine("Traveling at night doubles your distance but increases danger.");
+        Console.WriteLine("Resting at night will advance time to morning, adding remaining night turns to your day!");
+        Console.WriteLine("First, let's prepare you with a tutorial.");
 
         // Programming Challenge: Variable Declaration
         Console.WriteLine("\n=== TUTORIAL: CREATE YOUR HEALTH VARIABLE ===");
@@ -57,8 +71,7 @@ class Program
 
         // Weapon Selection and Crafting Tutorial
         Console.WriteLine("\n=== TUTORIAL: WEAPON CRAFTING - IF STATEMENT CHALLENGE ===");
-        Console.WriteLine("In this tutorial, you'll learn how to craft a weapon for your journey.");
-        Console.WriteLine("To choose your weapon, you must complete an if statement!");
+        Console.WriteLine("In this tutorial, you'll craft a weapon for your journey.");
         Console.WriteLine("Choose your weapon type by writing an if statement:");
         Console.WriteLine("Available weapons:");
         Console.WriteLine("1. Sword (requires Oak Wood)");
@@ -132,10 +145,11 @@ class Program
             }
             else
             {
-                player.Health = Math.Max(0, player.Health - 10);
+                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10; // Night penalty
+                player.Health = Math.Max(0, player.Health - penalty);
                 Console.WriteLine("✗ Incorrect if statement. Try again!");
                 Console.WriteLine("Format: if (choice == \"" + choiceNumber + "\")");
-                Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                 if (player.Health <= 0)
                 {
                     Console.WriteLine("Game Over! You have died due to low health.");
@@ -200,10 +214,11 @@ class Program
                     }
                     else
                     {
-                        player.Health = Math.Max(0, player.Health - 10);
+                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                        player.Health = Math.Max(0, player.Health - penalty);
                         Console.WriteLine("✗ Incorrect loop. Try again!");
                         Console.WriteLine("Format: for (int i = 0; i < 5; i++)");
-                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                         if (player.Health <= 0)
                         {
                             Console.WriteLine("Game Over! You have died due to low health.");
@@ -308,16 +323,21 @@ class Program
                                 }
                                 Console.WriteLine($"SUCCESS! You have crafted a {weaponChoice}!");
                                 Console.WriteLine("Tutorial complete! You're now ready to begin your journey.");
+                                // Add initial usable items after tutorial
+                                player.Inventory.Add(new Item { Name = "Health Potion", Type = ItemType.Consumable });
+                                player.Inventory.Add(new Item { Name = "Map Scroll", Type = ItemType.Tool });
+                                Console.WriteLine("You also find a Health Potion and a Map Scroll in your bag!");
                                 objectCreated = true;
                                 weaponCrafted = true;
                                 correctTreeFound = true;
                             }
                             else
                             {
-                                player.Health = Math.Max(0, player.Health - 10);
+                                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                                player.Health = Math.Max(0, player.Health - penalty);
                                 Console.WriteLine($"✗ Incorrect. Try again! Expected: {expectedCode}");
                                 Console.WriteLine($"Make sure Name = \"{weaponChoice}\", Damage = {expectedDamage}, Defense = {expectedDefense}");
-                                Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                                 if (player.Health <= 0)
                                 {
                                     Console.WriteLine("Game Over! You have died due to low health.");
@@ -328,10 +348,11 @@ class Program
                     }
                     else
                     {
-                        player.Health = Math.Max(0, player.Health - 10);
+                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                        player.Health = Math.Max(0, player.Health - penalty);
                         Console.WriteLine("✗ Incorrect string comparison. Try again!");
                         Console.WriteLine($"Format: if (treeType == \"{requiredWood}\")");
-                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                         if (player.Health <= 0)
                         {
                             Console.WriteLine("Game Over! You have died due to low health.");
@@ -342,35 +363,49 @@ class Program
             }
             else
             {
-                player.Health = Math.Max(0, player.Health - 10);
+                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                player.Health = Math.Max(0, player.Health - penalty);
                 Console.WriteLine("✗ Incorrect method call. Try again!");
                 Console.WriteLine("Format: EnterWoods();");
-                Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                 if (player.Health <= 0)
                 {
                     Console.WriteLine("Game Over! You have died due to low health.");
                     return;
                 }
             }
+            // Advance time after each tutorial interaction
+            player.AdvanceTime();
         }
 
         Console.WriteLine("\n=== JOURNEY BEGINS ===");
         Console.WriteLine("With your weapon crafted, the tutorial is over. Your goal is to reach Durban and prove your coding skills!");
-        Console.WriteLine("You'll face mini-bosses along the way, each teaching you a new skill.");
+        Console.WriteLine("You'll face mighty foes and discover legendary locations along the way.");
 
         while (player.Health > 0)
         {
-            // Display Game Status
+            // Update current location based on distance
+            UpdateLocation(player);
+
+            // Display Game Status with color
             Console.WriteLine("\n-------------------------------------------------");
-            Console.WriteLine($"Your Health: {player.Health} HP | Energy: {player.Energy} | Distance: {player.Distance} km");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Your Health: {player.Health} HP");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Energy: {player.Energy}");
+            Console.ResetColor();
+            Console.WriteLine($"Distance: {player.Distance} km");
             Console.WriteLine($"Weapon: {(player.EquippedWeapon != null ? $"{player.EquippedWeapon.Name} (Damage: {player.EquippedWeapon.Damage}, Defense: {player.EquippedWeapon.Defense})" : "None")}");
             Console.WriteLine($"Inventory: {string.Join(", ", player.Inventory.ConvertAll(item => item.Name))}");
             Console.WriteLine($"You're currently at: {player.CurrentLocation}. Your goal is to reach Durban (1600 km).");
+            Console.ForegroundColor = player.TimeOfDay == TimeOfDay.Day ? ConsoleColor.Yellow : ConsoleColor.Blue;
+            Console.WriteLine($"Time: {player.TimeOfDay} (Actions remaining in this phase: {player.MaxInteractionsInPhase - player.InteractionsInPhase})");
+            Console.ResetColor();
             ShowProgress(player);
 
             Console.WriteLine("\n=== PROGRAMMING CHALLENGE: ACTION SELECTION ===");
             Console.WriteLine("To perform an action, write a method call:");
-            Console.WriteLine("Available methods: Move(), Rest(), Eat(), Hunt(), PickUp(), Save()");
+            Console.WriteLine("Available methods: Move(), Rest(), Eat(), Hunt(), PickUp(), Save(), UseItem()");
             Console.WriteLine("Format: MethodName();");
 
             // Player action input through programming
@@ -382,8 +417,17 @@ class Program
                 // Movement challenge with Walk/Run variations
                 Console.WriteLine("\n=== PROGRAMMING CHALLENGE: CHOOSE MOVEMENT TYPE ===");
                 Console.WriteLine("You can move east toward Durban in two ways:");
-                Console.WriteLine("- Walk: Costs 10 energy, progresses 100 km (~6%)");
-                Console.WriteLine("- Run: Costs 25 energy, progresses 150 km (~9%)");
+                if (player.TimeOfDay == TimeOfDay.Day)
+                {
+                    Console.WriteLine("- Walk: Costs 10 energy, progresses 100 km (~6%)");
+                    Console.WriteLine("- Run: Costs 25 energy, progresses 150 km (~9%)");
+                }
+                else
+                {
+                    Console.WriteLine("- Walk: Costs 10 energy, progresses 200 km (~12%) (Night bonus)");
+                    Console.WriteLine("- Run: Costs 25 energy, progresses 300 km (~18%) (Night bonus)");
+                    Console.WriteLine("Beware: Traveling at night increases enemy encounters!");
+                }
                 Console.WriteLine("Write an if statement to specify your movement type:");
                 Console.WriteLine("Format: if (moveType == \"walk\") or if (moveType == \"run\")");
                 Console.WriteLine("First, how do you want to move? (walk/run):");
@@ -403,15 +447,18 @@ class Program
                         if (player.Energy >= 10)
                         {
                             player.Energy -= 10;
-                            player.Distance += 100;
-                            player.CurrentLocation = "En route to Durban";
-                            Console.WriteLine("You walk east toward Durban, covering 100 km.");
+                            int distanceGain = player.TimeOfDay == TimeOfDay.Day ? 100 : 200;
+                            player.Distance += distanceGain;
+                            Console.WriteLine($"You walk east toward Durban, covering {distanceGain} km.");
                             Console.WriteLine("Energy cost: -10. Current energy: " + player.Energy);
                             RandomEvent(player);
 
-                            // Enhanced Mini-Boss Encounters
+                            // Enhanced Mini-Boss Encounters with ASCII art
                             if (player.Distance >= 400 && player.Distance < 800 && !player.HasDefeatedGoblinKing)
                             {
+                                UpdateLocation(player);
+                                Console.WriteLine("\nAs you enter the Forest of Echoes, a chilling presence emerges...");
+                                DisplayAsciiArt("Goblin");
                                 Console.WriteLine("\n=== MINI-BOSS: MIRROR GOBLIN (400 km) ===");
                                 Console.WriteLine("A hideous Goblin blocks your path! But wait... it's terrified of its own reflection!");
                                 Console.WriteLine("Legend says goblins are so ugly they flee when they see themselves.");
@@ -433,15 +480,15 @@ class Program
                                         Console.WriteLine("'NOOO! MY HIDEOUS FACE!' *The goblin runs away screaming*");
                                         mirrorCreated = true;
                                         player.HasDefeatedGoblinKing = true;
-                                        // No actual combat needed - goblin flees
                                         Console.WriteLine("Victory! You've learned to create 2D arrays - the foundation of game boards!");
                                     }
                                     else
                                     {
-                                        player.Health = Math.Max(0, player.Health - 10);
+                                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                                        player.Health = Math.Max(0, player.Health - penalty);
                                         Console.WriteLine("✗ The mirror cracks! The goblin attacks while you're distracted!");
                                         Console.WriteLine("Format: string[,] mirror = new string[3,3];");
-                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                                         if (player.Health <= 0)
                                         {
                                             Console.WriteLine("Game Over! The goblin's ugly face was the last thing you saw.");
@@ -452,6 +499,9 @@ class Program
                             }
                             else if (player.Distance >= 800 && player.Distance < 1200 && !player.HasDefeatedWolfPackLeader)
                             {
+                                UpdateLocation(player);
+                                Console.WriteLine("\nYou approach the Bridge of Valor, guarded by a stern figure...");
+                                DisplayAsciiArt("Captain");
                                 Console.WriteLine("\n=== MINI-BOSS: THE PATROL CAPTAIN (800 km) ===");
                                 Console.WriteLine("A heavily armored Patrol Captain blocks the bridge!");
                                 Console.WriteLine("'HALT! To pass, you must inspect every section of my guard tower!'");
@@ -468,7 +518,7 @@ class Program
                                     string loopCode = Console.ReadLine().Trim();
                                     if (loopCode.ToLower().Contains("for") && loopCode.ToLower().Contains("int") &&
                                         loopCode.ToLower().Contains("< 3") && loopCode.ToLower().Contains("for") &&
-                                        loopCode.Count(c => c == '{') >= 2) // Check for nested structure
+                                        loopCode.Count(c => c == '{') >= 2)
                                     {
                                         Console.WriteLine("✓ Excellent! You systematically search every room!");
                                         Console.WriteLine("The Captain watches as you methodically check:");
@@ -482,10 +532,11 @@ class Program
                                     }
                                     else
                                     {
-                                        player.Health = Math.Max(0, player.Health - 10);
+                                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                                        player.Health = Math.Max(0, player.Health - penalty);
                                         Console.WriteLine("✗ Your search is chaotic! The Captain attacks your sloppy technique!");
                                         Console.WriteLine("Format: for (int floor = 0; floor < 3; floor++) { for (int room = 0; room < 3; room++) { } }");
-                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                                         if (player.Health <= 0)
                                         {
                                             Console.WriteLine("Game Over! The Captain's discipline was too much for you.");
@@ -496,6 +547,9 @@ class Program
                             }
                             else if (player.Distance >= 1200 && player.Distance < 1600 && !player.HasDefeatedDragonApprentice)
                             {
+                                UpdateLocation(player);
+                                Console.WriteLine("\nAt the Mystic Crossroads, a cloaked figure awaits...");
+                                DisplayAsciiArt("FortuneTeller");
                                 Console.WriteLine("\n=== MINI-BOSS: THE MYSTIC FORTUNE TELLER (1200 km) ===");
                                 Console.WriteLine("A mysterious Fortune Teller sits at a crossroads with a crystal grid.");
                                 Console.WriteLine("'Traveler! To pass, you must divine the secret of victory!'");
@@ -527,10 +581,11 @@ class Program
                                     }
                                     else
                                     {
-                                        player.Health = Math.Max(0, player.Health - 10);
+                                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                                        player.Health = Math.Max(0, player.Health - penalty);
                                         Console.WriteLine("✗ The crystals crack from your confusion! Dark energy lashes out!");
                                         Console.WriteLine("Format: if (crystals[0,0] == \"X\" && crystals[0,1] == \"X\" && crystals[0,2] == \"X\")");
-                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                                         if (player.Health <= 0)
                                         {
                                             Console.WriteLine("Game Over! The mystical energies consumed you.");
@@ -541,6 +596,9 @@ class Program
                             }
                             else if (player.Distance >= 1600 && !player.HasDefeatedDragonMaster)
                             {
+                                UpdateLocation(player);
+                                Console.WriteLine("\nYou arrive at Durban, where a towering figure stands...");
+                                DisplayAsciiArt("CodeMaster");
                                 Console.WriteLine("\n=== FINAL SHOWDOWN: THE GRAND CODE MASTER OF DURBAN ===");
                                 Console.WriteLine("You arrive in Durban to find the legendary Grand Code Master!");
                                 Console.WriteLine("'Welcome, traveler! I've been watching your journey.'");
@@ -555,7 +613,7 @@ class Program
                                 while (!masterChallenge)
                                 {
                                     Console.Write("Your code: ");
-                                    string masterCode = Console.ReadLine().Trim(); // Changed from moveCode to masterCode
+                                    string masterCode = Console.ReadLine().Trim();
                                     if (masterCode.ToLower().Contains("public void") && masterCode.ToLower().Contains("placemove") &&
                                         masterCode.ToLower().Contains("string[,] board") && masterCode.ToLower().Contains("int row") &&
                                         masterCode.ToLower().Contains("int col") && masterCode.ToLower().Contains("string player") &&
@@ -581,10 +639,11 @@ class Program
                                     }
                                     else
                                     {
-                                        player.Health = Math.Max(0, player.Health - 10);
+                                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                                        player.Health = Math.Max(0, player.Health - penalty);
                                         Console.WriteLine("✗ The Code Master shakes his head: 'Not quite right, young one.'");
                                         Console.WriteLine("Format: public void PlaceMove(string[,] board, int row, int col, string player) { board[row,col] = player; }");
-                                        Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                                         if (player.Health <= 0)
                                         {
                                             Console.WriteLine("Game Over! You weren't ready for the final challenge.");
@@ -600,9 +659,9 @@ class Program
                         if (player.Energy >= 25)
                         {
                             player.Energy -= 25;
-                            player.Distance += 150;
-                            player.CurrentLocation = "En route to Durban";
-                            Console.WriteLine("You run east toward Durban, covering 150 km.");
+                            int distanceGain = player.TimeOfDay == TimeOfDay.Day ? 150 : 300;
+                            player.Distance += distanceGain;
+                            Console.WriteLine($"You run east toward Durban, covering {distanceGain} km.");
                             Console.WriteLine("Energy cost: -25. Current energy: " + player.Energy);
                             RandomEvent(player);
                         }
@@ -618,10 +677,11 @@ class Program
                 }
                 else
                 {
-                    player.Health = Math.Max(0, player.Health - 10);
+                    int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                    player.Health = Math.Max(0, player.Health - penalty);
                     Console.WriteLine("✗ Incorrect move statement. Try again next time!");
                     Console.WriteLine($"Format: if (moveType == \"{moveType}\")");
-                    Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                    Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                     if (player.Health <= 0)
                     {
                         Console.WriteLine("Game Over! You have died due to low health.");
@@ -659,17 +719,66 @@ class Program
                 Console.WriteLine("Saving your progress...");
                 SaveGame(player);
             }
+            else if (actionCode == "useitem();" || actionCode == "useitem()")
+            {
+                Console.WriteLine("✓ Correct method call!");
+                player.UseItem();
+            }
             else
             {
-                player.Health = Math.Max(0, player.Health - 10);
+                int penalty = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+                player.Health = Math.Max(0, player.Health - penalty);
                 Console.WriteLine("✗ Invalid method call. Try again!");
                 Console.WriteLine("Remember: MethodName(); (like Move(), Rest(), etc.)");
-                Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                 if (player.Health <= 0)
                 {
                     Console.WriteLine("Game Over! You have died due to low health.");
                     return;
                 }
+            }
+
+            // Advance time after each action
+            player.AdvanceTime();
+
+            // Check for NPC encounter (Wandering Trader at 600 km)
+            if (player.Distance >= 600 && player.Distance < 800 && !player.HasMetTrader)
+            {
+                Console.WriteLine("\n=== ENCOUNTER: WANDERING TRADER ===");
+                Console.WriteLine("A cheerful trader approaches you on the path.");
+                Console.WriteLine("'Greetings, traveler! I can teach you a trick for a price.'");
+                Console.WriteLine("'Write a loop to count my 4 wares, and I’ll give you a Health Potion!'");
+                Console.WriteLine("Format: for (int i = 0; i < 4; i++)");
+
+                bool traderChallenge = false;
+                while (!traderChallenge)
+                {
+                    Console.Write("Your code: ");
+                    string traderCode = Console.ReadLine().Trim();
+                    if (traderCode.ToLower().Contains("for") && traderCode.ToLower().Contains("int i") &&
+                        traderCode.ToLower().Contains("i < 4") && traderCode.ToLower().Contains("i++"))
+                    {
+                        Console.WriteLine("✓ Well done! The trader claps in delight.");
+                        Console.WriteLine("'Here’s your reward, brave coder!'");
+                        player.PickUp(new Item { Name = "Health Potion", Type = ItemType.Consumable });
+                        traderChallenge = true;
+                        player.HasMetTrader = true;
+                    }
+                    else
+                    {
+                        int penalty = player.TimeOfDay == TimeOfDay.Night ? 10 : 5;
+                        player.Health = Math.Max(0, player.Health - penalty);
+                        Console.WriteLine("✗ The trader sighs. 'Not quite! Try again.'");
+                        Console.WriteLine("Format: for (int i = 0; i < 4; i++)");
+                        Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                        if (player.Health <= 0)
+                        {
+                            Console.WriteLine("Game Over! The trader’s disappointment was too much.");
+                            return;
+                        }
+                    }
+                }
+                player.AdvanceTime();
             }
         }
 
@@ -680,10 +789,43 @@ class Program
         Console.ReadLine();
     }
 
+    static void UpdateLocation(Player player)
+    {
+        foreach (var location in MapLocations)
+        {
+            if (player.Distance >= location.Key)
+            {
+                player.CurrentLocation = location.Value;
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (!MapLocations.ContainsKey(player.Distance) && player.Distance < 1600)
+        {
+            player.CurrentLocation = "En route to " + MapLocations[GetNextLandmark(player.Distance)];
+        }
+    }
+
+    // Make GetNextLandmark public static to allow access from other classes
+    public static int GetNextLandmark(int distance)
+    {
+        foreach (var location in MapLocations.Keys)
+        {
+            if (location > distance)
+            {
+                return location;
+            }
+        }
+        return 1600;
+    }
+
     static void RandomEvent(Player player)
     {
+        int enemyChance = player.TimeOfDay == TimeOfDay.Day ? 30 : 50; // Higher chance at night
         int eventChance = random.Next(1, 101);
-        if (eventChance <= 30) // 30% chance for combat
+        if (eventChance <= enemyChance) // Combat chance
         {
             Enemy enemy = random.Next(2) == 0
                 ? new Enemy { Health = 50, Name = "Goblin", Type = EnemyType.Goblin }
@@ -699,10 +841,49 @@ class Program
         }
         else if (eventChance <= 70) // 20% chance for a storm
         {
-            Console.WriteLine("A storm hits! You lose 10 health.");
-            player.Health -= 10;
+            int stormDamage = player.TimeOfDay == TimeOfDay.Night ? 15 : 10;
+            Console.WriteLine($"A storm hits! You lose {stormDamage} health.");
+            player.Health -= stormDamage;
+            if (player.TimeOfDay == TimeOfDay.Night)
+            {
+                Console.WriteLine("(Night penalty: +5 damage)");
+            }
         }
-        else // 30% chance for nothing
+        else if (eventChance <= 85) // 15% chance for a stranded traveler event
+        {
+            Console.WriteLine("You encounter a stranded traveler begging for help!");
+            Console.WriteLine("Option 1: Help them by writing a loop to gather 3 pieces of wood (gain a Health Potion).");
+            Console.WriteLine("Option 2: Ignore them and move on (no penalty).");
+            Console.WriteLine("Choose (1 or 2):");
+            string choice = Console.ReadLine().Trim();
+
+            if (choice == "1")
+            {
+                Console.WriteLine("Write a loop to gather 3 pieces of wood:");
+                Console.WriteLine("Format: for (int i = 0; i < 3; i++)");
+                Console.Write("Your code: ");
+                string loopCode = Console.ReadLine().Trim();
+                if (loopCode.ToLower().Contains("for") && loopCode.ToLower().Contains("int i") &&
+                    loopCode.ToLower().Contains("i < 3") && loopCode.ToLower().Contains("i++"))
+                {
+                    Console.WriteLine("✓ You gather the wood and help the traveler!");
+                    Console.WriteLine("The traveler thanks you and gives you a Health Potion.");
+                    player.PickUp(new Item { Name = "Health Potion", Type = ItemType.Consumable });
+                }
+                else
+                {
+                    int penalty = player.TimeOfDay == TimeOfDay.Night ? 10 : 5;
+                    player.Health = Math.Max(0, player.Health - penalty);
+                    Console.WriteLine("✗ You fail to gather the wood properly. The traveler leaves disappointed.");
+                    Console.WriteLine($"Health penalty: -{penalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
+                }
+            }
+            else
+            {
+                Console.WriteLine("You ignore the traveler and continue your journey.");
+            }
+        }
+        else // 15% chance for nothing
         {
             Console.WriteLine("The journey is uneventful.");
         }
@@ -723,7 +904,6 @@ class Program
         {
             Console.WriteLine("✓ Correct while loop! Combat begins!");
 
-            // Combat loop: the player and the enemy take turns
             while (enemy.Health > 0 && player.Health > 0)
             {
                 Console.WriteLine("\n--- Combat Mode ---");
@@ -750,12 +930,13 @@ class Program
                         break;
                     }
 
-                    // Enemy's counterattack
                     Console.WriteLine($"The {enemy.Name} attacks you!");
-                    int damage = Math.Max(0, enemy.Attack() - (player.EquippedWeapon?.Defense ?? 0));
-                    player.Health -= damage;
+                    int baseDamage = Math.Max(0, enemy.Attack() - (player.EquippedWeapon?.Defense ?? 0));
+                    int nightPenalty = player.TimeOfDay == TimeOfDay.Night ? 5 : 0;
+                    int totalDamage = baseDamage + nightPenalty;
+                    player.Health -= totalDamage;
                     Console.WriteLine($"Your {player.EquippedWeapon.Name} blocks {player.EquippedWeapon.Defense} damage!");
-                    Console.WriteLine($"You take {damage} damage. Your health: {player.Health} HP");
+                    Console.WriteLine($"You take {totalDamage} damage{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Your health: {player.Health} HP");
                 }
                 else if (combatCode == "run();" || combatCode == "run()")
                 {
@@ -765,14 +946,17 @@ class Program
                 }
                 else
                 {
-                    player.Health = Math.Max(0, player.Health - 10);
+                    int basePenalty = 10;
+                    int nightPenalty = player.TimeOfDay == TimeOfDay.Night ? 5 : 0;
+                    int totalPenalty = basePenalty + nightPenalty;
+                    player.Health = Math.Max(0, player.Health - totalPenalty);
                     Console.WriteLine("✗ Invalid method call. You hesitate!");
                     Console.WriteLine("The enemy gets a free attack!");
-                    int damage = Math.Max(0, enemy.Attack() - (player.EquippedWeapon?.Defense ?? 0));
+                    int damage = Math.Max(0, enemy.Attack() - (player.EquippedWeapon?.Defense ?? 0)) + nightPenalty;
                     player.Health -= damage;
                     Console.WriteLine($"Your {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "lack of weapon")} blocks {player.EquippedWeapon?.Defense ?? 0} damage!");
-                    Console.WriteLine($"You take {damage} damage. Your health: {player.Health} HP");
-                    Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+                    Console.WriteLine($"You take {damage} damage{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Your health: {player.Health} HP");
+                    Console.WriteLine($"Health penalty: -{totalPenalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
                     if (player.Health <= 0)
                     {
                         break;
@@ -787,14 +971,17 @@ class Program
         }
         else
         {
-            player.Health = Math.Max(0, player.Health - 10);
+            int basePenalty = 10;
+            int nightPenalty = player.TimeOfDay == TimeOfDay.Night ? 5 : 0;
+            int totalPenalty = basePenalty + nightPenalty;
+            player.Health = Math.Max(0, player.Health - totalPenalty);
             Console.WriteLine("✗ Incorrect while loop. You're caught off-guard!");
             Console.WriteLine("The enemy gets a free attack!");
-            int damage = Math.Max(0, enemy.Attack() - (player.EquippedWeapon?.Defense ?? 0));
+            int damage = Math.Max(0, enemy.Attack() - (player.EquippedWeapon?.Defense ?? 0)) + nightPenalty;
             player.Health -= damage;
             Console.WriteLine($"Your {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "lack of weapon")} blocks {player.EquippedWeapon?.Defense ?? 0} damage!");
-            Console.WriteLine($"You take {damage} damage. Your health: {player.Health} HP");
-            Console.WriteLine($"Health penalty: -10 HP. Current health: {player.Health} HP");
+            Console.WriteLine($"You take {damage} damage{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Your health: {player.Health} HP");
+            Console.WriteLine($"Health penalty: -{totalPenalty} HP{(player.TimeOfDay == TimeOfDay.Night ? " (Night penalty +5)" : "")}. Current health: {player.Health} HP");
             if (player.Health <= 0)
             {
                 Console.WriteLine("Game Over! You have died due to low health.");
@@ -817,6 +1004,49 @@ class Program
         File.WriteAllText("savegame.json", json);
         Console.WriteLine("Your progress has been saved.");
     }
+
+    static void DisplayAsciiArt(string character)
+    {
+        switch (character)
+        {
+            case "Goblin":
+                Console.WriteLine(@"   ___
+  /`   `\
+ /_______\
+ |  ***  | 
+ |_______|");
+                break;
+            case "Captain":
+                Console.WriteLine(@"   ___
+  /| |\
+  /| |\
+ /_|_|_\
+ |  ^  | 
+ |_____|");
+                break;
+            case "FortuneTeller":
+                Console.WriteLine(@"   ___
+  / * * \
+ /_______\
+ |  ~  | 
+ |_____|");
+                break;
+            case "CodeMaster":
+                Console.WriteLine(@"   ___
+  /| |\
+  /| |\
+ /_|_|_\
+ |  O  | 
+ |_____|");
+                break;
+        }
+    }
+}
+
+enum TimeOfDay
+{
+    Day,
+    Night
 }
 
 class Player
@@ -827,7 +1057,7 @@ class Player
     public int Distance { get; set; } = 0;
     public string ChosenWeapon { get; set; } = "";
     public Weapon EquippedWeapon { get; set; }
-    public string CurrentLocation { get; set; } = "Cape Town";
+    public string CurrentLocation { get; set; } = "Cape Town: The Starting Shores";
     public List<Item> Inventory { get; set; } = new List<Item>
     {
         new Item { Name = "Bed", Type = ItemType.Tool },
@@ -837,10 +1067,53 @@ class Player
     public bool HasDefeatedWolfPackLeader { get; set; } = false;
     public bool HasDefeatedDragonApprentice { get; set; } = false;
     public bool HasDefeatedDragonMaster { get; set; } = false;
+    public bool HasMetTrader { get; set; } = false;
+    // Day/Night system properties
+    public TimeOfDay TimeOfDay { get; set; } = TimeOfDay.Day;
+    public int InteractionsInPhase { get; set; } = 0;
+    public int MaxInteractionsInPhase { get; set; } = 3; // Default 3 for day/night
 
     public Player(string name)
     {
         Name = name;
+    }
+
+    public void AdvanceTime()
+    {
+        InteractionsInPhase++;
+        if (InteractionsInPhase >= MaxInteractionsInPhase)
+        {
+            // Switch between day and night
+            if (TimeOfDay == TimeOfDay.Day)
+            {
+                TimeOfDay = TimeOfDay.Night;
+                MaxInteractionsInPhase = 3; // Reset to default for night
+                Console.WriteLine("\nThe sun sets, and darkness falls. Night has begun.");
+                Console.WriteLine("Traveling at night doubles your distance but increases danger!");
+            }
+            else
+            {
+                TimeOfDay = TimeOfDay.Day;
+                MaxInteractionsInPhase = 3; // Reset to default for day
+                Console.WriteLine("\nThe sun rises, bringing a new day. Morning has arrived.");
+            }
+            InteractionsInPhase = 0;
+        }
+    }
+
+    public void Rest()
+    {
+        Energy = Math.Min(Energy + 20, 100);
+        Console.WriteLine("You rested and regained 20 energy.");
+        if (TimeOfDay == TimeOfDay.Night)
+        {
+            int remainingNightTurns = MaxInteractionsInPhase - InteractionsInPhase;
+            TimeOfDay = TimeOfDay.Day;
+            InteractionsInPhase = 0;
+            MaxInteractionsInPhase = 3 + remainingNightTurns; // Extend day phase
+            Console.WriteLine($"You wake up to a new morning! The remaining {remainingNightTurns} night actions extend your day.");
+            Console.WriteLine($"Day phase now has {MaxInteractionsInPhase} actions.");
+        }
     }
 
     public void CraftWeapon(Weapon weapon)
@@ -855,12 +1128,6 @@ class Player
         {
             enemy.Health -= EquippedWeapon.Damage;
         }
-    }
-
-    public void Rest()
-    {
-        Energy = Math.Min(Energy + 20, 100);
-        Console.WriteLine("You rested and regained 20 energy.");
     }
 
     public void Eat()
@@ -896,6 +1163,38 @@ class Player
     {
         Inventory.Add(item);
         Console.WriteLine($"Added {item.Name} to your inventory.");
+    }
+
+    public void UseItem()
+    {
+        Console.WriteLine("Which item would you like to use? (Enter the name, e.g., 'Health Potion'):");
+        string itemName = Console.ReadLine().Trim();
+        Item item = Inventory.Find(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
+
+        if (item == null)
+        {
+            Console.WriteLine("You don't have that item in your inventory.");
+            return;
+        }
+
+        switch (item.Name.ToLower())
+        {
+            case "health potion":
+                Health = Math.Min(Health + 30, 100);
+                Inventory.Remove(item);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You drink the Health Potion and regain 30 HP!");
+                Console.ResetColor();
+                break;
+            case "map scroll":
+                int nextLandmark = Program.GetNextLandmark(Distance); // Now accessible
+                Console.WriteLine($"You unroll the Map Scroll and see the next landmark: {Program.MapLocations[nextLandmark]} at {nextLandmark} km.");
+                Inventory.Remove(item);
+                break;
+            default:
+                Console.WriteLine("That item cannot be used right now.");
+                break;
+        }
     }
 }
 
